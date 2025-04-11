@@ -1,0 +1,6 @@
+FROM postgres:16
+## Устанавливаем переменные окружения для PostgreSQL
+ENV POSTGRES_DB=task_planner
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+EXPOSE 5432
