@@ -25,6 +25,12 @@ public class UserDto {
     @Length(min = 8, max = 20)
     private String repeatPassword;
 
+    public UserDto(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
     @AssertTrue(message = "Passwords do not match")
     private boolean isPasswordsMatching() {
         return password != null && password.equals(repeatPassword);

@@ -62,14 +62,11 @@ public class TaskServiceTest {
 
     @Test
     void getAllTasks_ShouldReturnTasksList() {
-        // Arrange
         when(taskRepository.findTasksByUser_Email(TEST_EMAIL))
                 .thenReturn(Optional.of(Arrays.asList(testTask)));
 
-        // Act
         List<TaskDto> result = taskService.getAllTasks(TEST_EMAIL);
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals(testTaskDto.getId(), result.get(0).getId());
         assertEquals(testTaskDto.getTitle(), result.get(0).getTitle());
@@ -78,14 +75,11 @@ public class TaskServiceTest {
 
     @Test
     void createTask_ShouldCreateAndReturnTask() {
-        // Arrange
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testUser));
         when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-        // Act
         TaskDto result = taskService.createTask(TEST_EMAIL, testTaskDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(testTaskDto.getTitle(), result.getTitle());
         verify(userRepository, times(1)).findByEmail(TEST_EMAIL);
@@ -94,7 +88,6 @@ public class TaskServiceTest {
 
     @Test
     void updateTask_ShouldUpdateAndReturnTask() {
-        // Arrange
         TaskDto updatedTaskDto = new TaskDto();
         updatedTaskDto.setId(1L);
         updatedTaskDto.setTitle("Updated Task");
@@ -105,10 +98,8 @@ public class TaskServiceTest {
                 .thenReturn(Optional.of(testTask));
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         TaskDto result = taskService.updateTask(TEST_EMAIL, updatedTaskDto);
-
-        // Assert
+            
         assertNotNull(result);
         assertEquals(updatedTaskDto.getTitle(), result.getTitle());
         assertEquals(updatedTaskDto.getDescription(), result.getDescription());
@@ -119,15 +110,12 @@ public class TaskServiceTest {
 
     @Test
     void deleteTask_ShouldDeleteTaskAndReturnId() {
-        // Arrange
         when(taskRepository.findTaskByIdAndUser_Email(1L, TEST_EMAIL))
                 .thenReturn(Optional.of(testTask));
         doNothing().when(taskRepository).delete(any(Task.class));
 
-        // Act
         Long result = taskService.deleteTask(TEST_EMAIL, 1L);
 
-        // Assert
         assertEquals(1L, result);
         verify(taskRepository, times(1)).findTaskByIdAndUser_Email(1L, TEST_EMAIL);
         verify(taskRepository, times(1)).delete(any(Task.class));
@@ -135,13 +123,10 @@ public class TaskServiceTest {
 
     @Test
     void setOwner_ShouldReturnUserByEmail() {
-        // Arrange
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testUser));
 
-        // Act
         User result = taskService.setOwner(TEST_EMAIL);
 
-        // Assert
         assertNotNull(result);
         assertEquals(testUser.getId(), result.getId());
         assertEquals(TEST_EMAIL, result.getEmail());
@@ -150,10 +135,8 @@ public class TaskServiceTest {
 
     @Test
     void converterToDto_ShouldConvertTaskToTaskDto() {
-        // Act
         TaskDto result = taskService.converterToDto(testTask);
 
-        // Assert
         assertNotNull(result);
         assertEquals(testTask.getId(), result.getId());
         assertEquals(testTask.getTitle(), result.getTitle());
@@ -164,10 +147,8 @@ public class TaskServiceTest {
 
     @Test
     void converterToTask_ShouldConvertTaskDtoToTask() {
-        // Act
         Task result = taskService.converterToTask(testTaskDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(testTaskDto.getId(), result.getId());
         assertEquals(testTaskDto.getTitle(), result.getTitle());

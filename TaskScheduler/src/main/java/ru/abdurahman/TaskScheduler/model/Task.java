@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "Tasks")
 public class Task {
@@ -23,6 +22,8 @@ public class Task {
     @Column(name = "isCompleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isCompleted;
 
+    public Task() {
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

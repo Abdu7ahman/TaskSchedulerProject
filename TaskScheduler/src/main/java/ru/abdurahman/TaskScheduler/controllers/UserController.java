@@ -1,17 +1,22 @@
 package ru.abdurahman.TaskScheduler.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.abdurahman.TaskScheduler.dto.UserDto;
 import ru.abdurahman.TaskScheduler.jwt.JwtTokenUtils;
 import ru.abdurahman.TaskScheduler.model.User;
 import ru.abdurahman.TaskScheduler.repositories.UserRepository;
 
-@RequestMapping
+@Tag(name = "Пользователи", description = "Получение информации о текущем пользователе")
 @RestController
+@RequestMapping
 public class UserController {
 
     private final JwtTokenUtils jwtTokenUtils;
@@ -23,8 +28,19 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    @Operation(summary = "Получить текущего пользователя", description = "Возвращает данные пользователя на основе JWT токена из заголовка")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пользователь найден",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "401", description = "Токен недействителен или отсутствует", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
+    })
     @GetMapping("/user")
-    public UserDto getAllUsers(@RequestHeader("Authorization") String token) {
+    public UserDto getAllUsers(
+            @RequestHeader("Authorization")
+            @Parameter(description = "JWT токен. Пример: Bearer eyJhbGci...") String token) {
+
         String jwtToken = token.substring(7);
         String email = jwtTokenUtils.getUsername(jwtToken);
         User user = userRepository
@@ -40,6 +56,4 @@ public class UserController {
         userDto.setUsername(user.getUsername());
         return userDto;
     }
-
-
 }
